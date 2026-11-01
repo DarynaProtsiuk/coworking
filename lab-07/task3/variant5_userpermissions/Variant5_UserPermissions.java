@@ -31,7 +31,9 @@ public class Variant5_UserPermissions {
         }
 
         @Override
-        public String toString() { return "PasswordHash[***]"; } // секрет не потрапляє в логи
+        public String toString() {
+            return "PasswordHash[***]";
+        } // секрет не потрапляє в логи
     }
 
     public record ApiKey(String value) {
@@ -48,7 +50,7 @@ public class Variant5_UserPermissions {
         public String toString() { return "ApiKey[***]"; }
     }
 
-    // ---------- Рольові контракти ----------
+    // Інтерфейси
 
     public interface Account {
         String getUsername();
@@ -78,9 +80,12 @@ public class Variant5_UserPermissions {
             this.passwordHash = Objects.requireNonNull(passwordHash, "passwordHash");
         }
 
-        @Override public String getUsername() { return username.value(); }
-        @Override public String getEmail() { return email.value(); }
-        @Override public boolean isActive() { return active; }
+        @Override public String getUsername() {
+            return username.value(); }
+        @Override public String getEmail() {
+            return email.value(); }
+        @Override public boolean isActive() {
+            return active; }
 
         @Override
         public void changePassword(String oldPassword, String newPassword) {
@@ -121,10 +126,13 @@ public class Variant5_UserPermissions {
             this.apiKey = Objects.requireNonNull(apiKey, "apiKey");
         }
 
-        @Override public String getUsername() { return username.value(); }
-        @Override public String getEmail() { return email.value(); }
+        @Override public String getUsername() {
+            return username.value(); }
+        @Override public String getEmail() {
+            return email.value(); }
 
-        public boolean verifyApiKey(String candidate) { return apiKey.matches(candidate); }
+        public boolean verifyApiKey(String candidate) {
+            return apiKey.matches(candidate); }
     }
 
     //Клієнтський код
