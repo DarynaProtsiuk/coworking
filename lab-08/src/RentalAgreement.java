@@ -49,8 +49,20 @@ public class RentalAgreement {
         return calculateRentalTotal() + calculateInsuranceTotal();
     }
 
-    public void approve(){
-        this.status = "Approved";
+    public void approve() {
+        if ("Approved".equals(status)) {
+            throw new IllegalStateException("Agreement is already approved");
+        }
+
+        if (calculateFinalPrice() <= 0) {
+            throw new IllegalStateException("Final price must be positive");
+        }
+
+        if (calculateDepositAmount() <= 0) {
+            throw new IllegalStateException("Deposit must be positive");
+        }
+
+        status = "Approved";
     }
 
     public int getId() {
