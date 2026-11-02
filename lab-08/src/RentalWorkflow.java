@@ -10,8 +10,6 @@ public class RentalWorkflow {
     }
 
     public RentalResponse createRental(RentalRequest request) {
-        RentalAgreement agreement = registrationService.register(request);
-
-        return completionService.complete(agreement);
+        return completionService.complete(registrationService.register(request));
     }
 }
