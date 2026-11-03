@@ -22,7 +22,7 @@ public class Variant5_InventoryStockManager {
         public void setQuantityDelta(int quantityDelta) { this.quantityDelta = quantityDelta; }
     }
 
-    public interface InventoryRepository {   // абстракції
+    public interface InventoryRepository {
         void updateStock(String sku, int delta);
     }
 
@@ -106,7 +106,7 @@ public class Variant5_InventoryStockManager {
         private final ShelfBeacon beacon;
         private final StockEventLogger logger;
 
-        // Constructor Injection: усі залежності приходять ззовні й не створюються через new.
+        // Constructor Injection: усі залежності приходять ззовні
         public InventoryStockManager(InventoryRepository repository, ShelfBeacon beacon, StockEventLogger logger) {
             this.repository = Objects.requireNonNull(repository, "repository");
             this.beacon = Objects.requireNonNull(beacon, "beacon");
