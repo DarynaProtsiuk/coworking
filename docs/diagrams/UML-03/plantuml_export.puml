@@ -1,0 +1,78 @@
+
+@startuml
+title Завдання 3 — Prototype: пакети проживання готелю
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+class Task3 <<Client>> {
+  {static} +log(source: String, message: String): void
+  {static} +main(args: String[]): void
+}
+
+class AccommodationPackage <<ConcretePrototype>> {
+  -nameOfPackage: String
+  -meals: String
+  -transfer: String
+  -spaProcedures: List<String>
+  -skiPass: SkiPass
+  -discount: Discount
+  +AccommodationPackage(nameOfPackage: String, meals: String, transfer: String, spaProcedures: List<String>, skiPass: SkiPass, discount: Discount)
+  -AccommodationPackage(other: AccommodationPackage)
+  +copy(): AccommodationPackage
+  +addSpaProcedure(procedure: String): void
+  +setSkiPassDays(days: int): void
+  +setDiscountPercent(percent: int): void
+  +toString(): String
+}
+
+class SkiPass <<Deep-copyable part>> {
+  -days: int
+  -zone: String
+  +SkiPass(days: int, zone: String)
+  +setDays(days: int): void
+  +copy(): SkiPass
+  +toString(): String
+}
+
+class Discount <<Deep-copyable part>> {
+  -name: String
+  -percent: int
+  +Discount(name: String, percent: int)
+  +setPercent(percent: int): void
+  +copy(): Discount
+  +toString(): String
+}
+
+Task3 ..> AccommodationPackage : creates / calls copy()
+Task3 ..> SkiPass : creates
+Task3 ..> Discount : creates
+
+AccommodationPackage "1" *-- "1" SkiPass : contains
+AccommodationPackage "1" *-- "1" Discount : contains
+
+AccommodationPackage ..> Task3 : calls log()
+
+note right of AccommodationPackage
+  Prototype role:
+  copy() creates a deep copy
+  using a private copy constructor.
+
+  The copy includes:
+  - SPA list
+  - SkiPass
+  - Discount
+
+  Copying does not repeat
+  the expensive initialization.
+end note
+
+note right of Task3
+  Client role:
+  - Starts program execution
+  - Creates the standard package
+  - Creates guest packages
+  - Logs the main execution stages
+end note
+
+@enduml
