@@ -1,0 +1,87 @@
+<mxfile host="app.diagrams.net" version="24.0.0">
+  <diagram id="task1-pool" name="Завдання 1 - Object Pool">
+    <mxGraphModel dx="1100" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Reception: Client -->
+        <mxCell id="rec" value="«Client»&lt;br&gt;&lt;b&gt;Reception&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="230" y="40" width="500" height="190" as="geometry"/>
+        </mxCell>
+        <mxCell id="rec_a" value="- pool: KeyCardPool&lt;br&gt;- cardsByRoom: Map&amp;lt;String, KeyCard&amp;gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="rec">
+          <mxGeometry y="40" width="500" height="62" as="geometry"/>
+        </mxCell>
+        <mxCell id="rec_d" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="rec">
+          <mxGeometry y="102" width="500" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="rec_m" value="+ Reception(pool: KeyCardPool)&lt;br&gt;+ checkIn(guest: String, room: String, validUntil: String): Optional&amp;lt;KeyCard&amp;gt;&lt;br&gt;+ checkOut(room: String): void&lt;br&gt;+ tryOpenDoor(card: KeyCard, room: String): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="rec">
+          <mxGeometry y="110" width="500" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- KeyCardPool: Object Pool -->
+        <mxCell id="pool" value="«Object Pool»&lt;br&gt;&lt;b&gt;KeyCardPool&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="330" width="340" height="190" as="geometry"/>
+        </mxCell>
+        <mxCell id="pool_a" value="- maxSize: int&lt;br&gt;- free: Deque&amp;lt;KeyCard&amp;gt;&lt;br&gt;- allCards: List&amp;lt;KeyCard&amp;gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="pool">
+          <mxGeometry y="40" width="340" height="62" as="geometry"/>
+        </mxCell>
+        <mxCell id="pool_d" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="pool">
+          <mxGeometry y="102" width="340" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="pool_m" value="+ KeyCardPool(maxSize: int)&lt;br&gt;+ acquire(): Optional&amp;lt;KeyCard&amp;gt;&lt;br&gt;+ release(card: KeyCard): void&lt;br&gt;+ printStatistics(): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="pool">
+          <mxGeometry y="110" width="340" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- KeyCard: Pooled Object -->
+        <mxCell id="card" value="«Pooled Object»&lt;br&gt;&lt;b&gt;KeyCard&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="500" y="330" width="380" height="262" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_a" value="- id: String&lt;br&gt;- roomNumber: String&lt;br&gt;- validUntil: String&lt;br&gt;- issueCount: int" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="card">
+          <mxGeometry y="40" width="380" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_d" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="card">
+          <mxGeometry y="120" width="380" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="card_m" value="+ KeyCard(id: String)&lt;br&gt;+ program(roomNumber: String, validUntil: String): void&lt;br&gt;+ reset(): void&lt;br&gt;+ opens(room: String): boolean&lt;br&gt;+ getId(): String&lt;br&gt;+ getRoomNumber(): String&lt;br&gt;+ getIssueCount(): int" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="card">
+          <mxGeometry y="128" width="380" height="134" as="geometry"/>
+        </mxCell>
+
+        <!-- Reception -> KeyCardPool: асоціація, 1 -->
+        <mxCell id="e1" value="pool" style="endArrow=open;endFill=0;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=0.2;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rec" target="pool">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e1t" value="1" style="edgeLabel;resizable=0;html=1;align=left;verticalAlign=top;" vertex="1" connectable="0" parent="e1">
+          <mxGeometry x="1" relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Reception -> KeyCard: асоціація, 0..* -->
+        <mxCell id="e2" value="cardsByRoom" style="endArrow=open;endFill=0;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=0.8;exitY=1;exitDx=0;exitDy=0;entryX=0.342;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="rec" target="card">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e2t" value="0..*" style="edgeLabel;resizable=0;html=1;align=left;verticalAlign=top;" vertex="1" connectable="0" parent="e2">
+          <mxGeometry x="1" relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- KeyCardPool ◆ KeyCard: композиція, 1 : 0..5 -->
+        <mxCell id="e3" value="allCards" style="endArrow=none;startArrow=diamondThin;startFill=1;startSize=14;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=1;exitY=0.69;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="pool" target="card">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3s" value="1" style="edgeLabel;resizable=0;html=1;align=left;verticalAlign=bottom;" vertex="1" connectable="0" parent="e3">
+          <mxGeometry x="-1" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3t" value="0..5" style="edgeLabel;resizable=0;html=1;align=right;verticalAlign=bottom;" vertex="1" connectable="0" parent="e3">
+          <mxGeometry x="1" relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Примітка про логіку пулу -->
+        <mxCell id="note1" value="acquire(): видає вільну карту з free; якщо вільних немає й створено менше maxSize — створює нову; інакше повертає порожній результат.&lt;br&gt;release(): скидає стан карти (reset) і повертає її у free." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#fff9b1;strokeColor=#d6b656;align=left;verticalAlign=top;spacingLeft=6;spacingRight=6;size=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="560" width="340" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="n1" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1" source="note1" target="pool">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

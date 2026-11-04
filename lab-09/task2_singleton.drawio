@@ -1,0 +1,94 @@
+<mxfile host="app.diagrams.net" version="24.0.0">
+  <diagram id="task2-singleton" name="Завдання 2 - Singleton">
+    <mxGraphModel dx="1100" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Department: Client -->
+        <mxCell id="dep" value="«Client»&lt;br&gt;&lt;b&gt;Department&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="200" y="40" width="420" height="136" as="geometry"/>
+        </mxCell>
+        <mxCell id="dep_a" value="- name: String" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="dep">
+          <mxGeometry y="40" width="420" height="26" as="geometry"/>
+        </mxCell>
+        <mxCell id="dep_d" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="dep">
+          <mxGeometry y="66" width="420" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="dep_m" value="+ Department(name: String)&lt;br&gt;+ charge(room: String, description: String, amount: int): void&lt;br&gt;+ issueFinalBill(room: String): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="dep">
+          <mxGeometry y="74" width="420" height="62" as="geometry"/>
+        </mxCell>
+
+        <!-- BillingService: Singleton (статичні члени підкреслені) -->
+        <mxCell id="bs" value="«Singleton»&lt;br&gt;&lt;b&gt;BillingService&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="300" width="340" height="208" as="geometry"/>
+        </mxCell>
+        <mxCell id="bs_a" value="&lt;u&gt;- instance: BillingService&lt;/u&gt;&lt;br&gt;- id: String&lt;br&gt;- billsByRoom: Map&amp;lt;String, List&amp;lt;Charge&amp;gt;&amp;gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="bs">
+          <mxGeometry y="40" width="340" height="62" as="geometry"/>
+        </mxCell>
+        <mxCell id="bs_d" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="bs">
+          <mxGeometry y="102" width="340" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="bs_m" value="- BillingService()&lt;br&gt;&lt;u&gt;+ getInstance(): BillingService {synchronized}&lt;/u&gt;&lt;br&gt;+ addCharge(room: String, charge: Charge): void&lt;br&gt;+ printFinalBill(room: String): void&lt;br&gt;+ getId(): String" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="bs">
+          <mxGeometry y="110" width="340" height="98" as="geometry"/>
+        </mxCell>
+
+        <!-- Charge: Value Object -->
+        <mxCell id="chg" value="«Value Object»&lt;br&gt;&lt;b&gt;Charge&lt;/b&gt;" style="swimlane;fontStyle=0;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="500" y="300" width="400" height="190" as="geometry"/>
+        </mxCell>
+        <mxCell id="chg_a" value="- department: String&lt;br&gt;- description: String&lt;br&gt;- amount: int" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="chg">
+          <mxGeometry y="40" width="400" height="62" as="geometry"/>
+        </mxCell>
+        <mxCell id="chg_d" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="chg">
+          <mxGeometry y="102" width="400" height="8" as="geometry"/>
+        </mxCell>
+        <mxCell id="chg_m" value="+ Charge(department: String, description: String, amount: int)&lt;br&gt;+ getDepartment(): String&lt;br&gt;+ getDescription(): String&lt;br&gt;+ getAmount(): int" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="chg">
+          <mxGeometry y="110" width="400" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Department ┈> BillingService: залежність -->
+        <mxCell id="d1" value="«uses» getInstance()" style="dashed=1;endArrow=open;endFill=0;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=0.238;exitY=1;exitDx=0;exitDy=0;entryX=0.765;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="dep" target="bs">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Department ┈> Charge: залежність (створює) -->
+        <mxCell id="d2" value="«create»" style="dashed=1;endArrow=open;endFill=0;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=0.81;exitY=1;exitDx=0;exitDy=0;entryX=0.1;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="dep" target="chg">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- BillingService ◇ Charge: агрегація, 1 : 0..* -->
+        <mxCell id="a1" value="billsByRoom" style="endArrow=none;startArrow=diamondThin;startFill=0;startSize=14;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=1;exitY=0.481;exitDx=0;exitDy=0;entryX=0;entryY=0.526;entryDx=0;entryDy=0;" edge="1" parent="1" source="bs" target="chg">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a1s" value="1" style="edgeLabel;resizable=0;html=1;align=left;verticalAlign=bottom;" vertex="1" connectable="0" parent="a1">
+          <mxGeometry x="-1" relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a1t" value="0..*" style="edgeLabel;resizable=0;html=1;align=right;verticalAlign=bottom;" vertex="1" connectable="0" parent="a1">
+          <mxGeometry x="1" relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- BillingService → BillingService: самоасоціація через статичне поле instance -->
+        <mxCell id="s1" value="instance" style="endArrow=open;endFill=0;html=1;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=0;exitY=0.18;exitDx=0;exitDy=0;entryX=0;entryY=0.3;entryDx=0;entryDy=0;" edge="1" parent="1" source="bs" target="bs">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="0" y="337"/>
+              <mxPoint x="0" y="362"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s1t" value="1" style="edgeLabel;resizable=0;html=1;align=left;verticalAlign=bottom;" vertex="1" connectable="0" parent="s1">
+          <mxGeometry x="1" relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Примітка про Singleton -->
+        <mxCell id="note2" value="getInstance(): якщо екземпляра ще немає — створює службу (конструктор private), інакше повертає наявну.&lt;br&gt;Усі підрозділи отримують один і той самий об'єкт, тому рахунки гостей зберігаються в одному місці." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#fff9b1;strokeColor=#d6b656;align=left;verticalAlign=top;spacingLeft=6;spacingRight=6;size=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="548" width="340" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="n2" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1" source="note2" target="bs">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
