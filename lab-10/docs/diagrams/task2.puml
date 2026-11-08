@@ -1,0 +1,110 @@
+@startuml
+title Завдання 2. Builder — бронювання готелю «Карпатські вершини»
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+enum RoomCategory <<Domain enum>> {
+  STANDARD
+  COMFORT
+  LUXURY
+}
+
+class Guest <<Domain>> {
+  - firstName : String
+  - lastName : String
+  + Guest(firstName : String, lastName : String)
+  + getFirstName() : String
+  + getLastName() : String
+  + toString() : String
+}
+
+class Booking <<Product>> {
+  - guest : Guest {readOnly}
+  - arriveDate : LocalDate {readOnly}
+  - departureDate : LocalDate {readOnly}
+  - roomCategory : RoomCategory {readOnly}
+  - breakfast : boolean {readOnly}
+  - transfer : boolean {readOnly}
+  - lateCheckout : boolean {readOnly}
+  - childBed : boolean {readOnly}
+  - comment : String {readOnly}
+  ~ Booking(guest, arriveDate, departureDate,\n roomCategory, breakfast, transfer,\n lateCheckout, childBed, comment)
+  + getGuest() : Guest
+  + getArriveDate() : LocalDate
+  + getDepartureDate() : LocalDate
+  + getRoomCategory() : RoomCategory
+  + isBreakfast() : boolean
+  + isTransfer() : boolean
+  + isLateCheckout() : boolean
+  + isChildBed() : boolean
+  + getComment() : String
+}
+
+class BookingBuilder <<Builder>> {
+  - guest : Guest
+  - arriveDate : LocalDate
+  - departureDate : LocalDate
+  - roomCategory : RoomCategory
+  - breakfast : boolean
+  - transfer : boolean
+  - lateCheckout : boolean
+  - childBed : boolean
+  - comment : String
+  + setGuest(guest : Guest) : BookingBuilder
+  + setArriveDate(d : LocalDate) : BookingBuilder
+  + setDepartureDate(d : LocalDate) : BookingBuilder
+  + setRoomCategory(c : RoomCategory) : BookingBuilder
+  + setBreakfast(b : boolean) : BookingBuilder
+  + setTransfer(b : boolean) : BookingBuilder
+  + setLateCheckout(b : boolean) : BookingBuilder
+  + setChildBed(b : boolean) : BookingBuilder
+  + setComment(c : String) : BookingBuilder
+  + build() : Booking
+}
+
+class BookingDirector <<Director>> {
+  + createWeekend(guest : Guest, arriveDate : LocalDate) : Booking
+  + createSkiWeek(guest : Guest, arriveDate : LocalDate) : Booking
+}
+
+class Main <<Client>> {
+  + {static} main(args : String[]) : void
+}
+
+' --- Зв'язки ---
+Booking o--> "1" Guest : guest
+Booking --> "1" RoomCategory : roomCategory
+
+BookingBuilder o--> "0..1" Guest : guest
+BookingBuilder --> "0..1" RoomCategory : roomCategory
+
+BookingBuilder ..> Booking : <<create>>\nbuild()
+BookingDirector ..> BookingBuilder : <<use>>
+BookingDirector ..> Booking : <<create>>
+
+Main ..> BookingBuilder : <<use>>
+Main ..> BookingDirector : <<use>>
+Main ..> Booking : <<use>>
+Main ..> Guest : <<create>>
+
+note right of BookingBuilder
+  **Роль: Builder.**
+  Збирає Booking по кроках
+  (fluent-інтерфейс) і перевіряє
+  дані в build().
+end note
+
+note right of Booking
+  **Роль: Product.**
+  Незмінний об'єкт, який
+  створюється лише через Builder.
+end note
+
+note bottom of BookingDirector
+  **Роль: Director.**
+  Готові сценарії:
+  «Вихідні» і «Лижний тиждень».
+end note
+
+@enduml

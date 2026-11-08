@@ -1,0 +1,176 @@
+@startuml
+title Завдання 1. Abstract Factory — комплектація номера готелю «Карпатські вершини»
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam nodesep 25
+skinparam ranksep 60
+
+' ===== Абстрактна фабрика =====
+interface RoomFactory <<Abstract Factory>> {
+  + createCosmetic() : Cosmetic
+  + createMinibar() : Minibar
+  + createTextile() : Textile
+}
+
+class StandardFactory <<Concrete Factory>> {
+  + createCosmetic() : Cosmetic
+  + createMinibar() : Minibar
+  + createTextile() : Textile
+}
+class LuxuryFactory <<Concrete Factory>> {
+  + createCosmetic() : Cosmetic
+  + createMinibar() : Minibar
+  + createTextile() : Textile
+}
+class FamilyFactory <<Concrete Factory>> {
+  + createCosmetic() : Cosmetic
+  + createMinibar() : Minibar
+  + createTextile() : Textile
+}
+class NewCategoryFactory <<Concrete Factory>> {
+  + createCosmetic() : Cosmetic
+  + createMinibar() : Minibar
+  + createTextile() : Textile
+}
+
+' ===== Абстрактні продукти =====
+interface Cosmetic <<Abstract Product A>> {
+  + getInfo() : String
+}
+interface Minibar <<Abstract Product B>> {
+  + getInfo() : String
+}
+interface Textile <<Abstract Product C>> {
+  + getInfo() : String
+}
+
+' ===== Конкретні продукти: косметика =====
+class StandardCosmetic <<Concrete Product>> {
+  + getInfo() : String
+}
+class LuxuryCosmetic <<Concrete Product>> {
+  + getInfo() : String
+}
+class FamilyCosmetic <<Concrete Product>> {
+  + getInfo() : String
+}
+class NewCosmetic <<Concrete Product>> {
+  + getInfo() : String
+}
+
+' ===== Конкретні продукти: мінібар =====
+class StandardMinibar <<Concrete Product>> {
+  + getInfo() : String
+}
+class LuxuryMinibar <<Concrete Product>> {
+  + getInfo() : String
+}
+class FamilyMinibar <<Concrete Product>> {
+  + getInfo() : String
+}
+class NewMinibar <<Concrete Product>> {
+  + getInfo() : String
+}
+
+' ===== Конкретні продукти: текстиль =====
+class StandardTextile <<Concrete Product>> {
+  + getInfo() : String
+}
+class LuxuryTextile <<Concrete Product>> {
+  + getInfo() : String
+}
+class FamilyTextile <<Concrete Product>> {
+  + getInfo() : String
+}
+class NewTextile <<Concrete Product>> {
+  + getInfo() : String
+}
+
+' ===== Клієнти =====
+class HousekeepingService <<Client>> {
+  + prepareRoom(factory : RoomFactory) : void
+}
+class Main <<Entry point>> {
+  + {static} main(args : String[]) : void
+}
+
+' ===== Реалізація: фабрики =====
+RoomFactory <|.. StandardFactory
+RoomFactory <|.. LuxuryFactory
+RoomFactory <|.. FamilyFactory
+RoomFactory <|.. NewCategoryFactory
+
+' ===== Реалізація: продукти =====
+Cosmetic <|.. StandardCosmetic
+Cosmetic <|.. LuxuryCosmetic
+Cosmetic <|.. FamilyCosmetic
+Cosmetic <|.. NewCosmetic
+
+Minibar <|.. StandardMinibar
+Minibar <|.. LuxuryMinibar
+Minibar <|.. FamilyMinibar
+Minibar <|.. NewMinibar
+
+Textile <|.. StandardTextile
+Textile <|.. LuxuryTextile
+Textile <|.. FamilyTextile
+Textile <|.. NewTextile
+
+' ===== Залежності: фабрика створює продукти =====
+StandardFactory ..> StandardCosmetic : <<create>>
+StandardFactory ..> StandardMinibar : <<create>>
+StandardFactory ..> StandardTextile : <<create>>
+
+LuxuryFactory ..> LuxuryCosmetic : <<create>>
+LuxuryFactory ..> LuxuryMinibar : <<create>>
+LuxuryFactory ..> LuxuryTextile : <<create>>
+
+FamilyFactory ..> FamilyCosmetic : <<create>>
+FamilyFactory ..> FamilyMinibar : <<create>>
+FamilyFactory ..> FamilyTextile : <<create>>
+
+NewCategoryFactory ..> NewCosmetic : <<create>>
+NewCategoryFactory ..> NewMinibar : <<create>>
+NewCategoryFactory ..> NewTextile : <<create>>
+
+' ===== Залежності клієнта (тільки від абстракцій) =====
+HousekeepingService ..> RoomFactory : <<use>>
+HousekeepingService ..> Cosmetic : <<use>>
+HousekeepingService ..> Minibar : <<use>>
+HousekeepingService ..> Textile : <<use>>
+
+Main ..> HousekeepingService : <<use>>
+Main ..> StandardFactory : <<create>>
+Main ..> LuxuryFactory : <<create>>
+Main ..> FamilyFactory : <<create>>
+Main ..> NewCategoryFactory : <<create>>
+
+' ===== Примітки =====
+note right of RoomFactory
+  **Роль: Abstract Factory.**
+  Один інтерфейс для створення
+  цілого набору пов'язаних
+  продуктів (косметика + мінібар
+  + текстиль).
+end note
+
+note bottom of LuxuryFactory
+  **Роль: Concrete Factory.**
+  Створює продукти лише
+  своєї категорії номера.
+end note
+
+note left of HousekeepingService
+  **Роль: Client.**
+  Працює тільки з інтерфейсами
+  і не знає конкретних класів.
+end note
+
+note right of Cosmetic
+  **Роль: Abstract Product.**
+  Спільний інтерфейс для всіх
+  варіантів одного виду продукту.
+end note
+
+@enduml
