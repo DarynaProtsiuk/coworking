@@ -1,0 +1,136 @@
+@startuml task3-factory-method
+title Завдання 3. Підтвердження бронювання (Factory Method)
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam classFontSize 13
+skinparam noteFontSize 12
+
+' ===================== ПРОДУКТИ =====================
+interface Confirmation <<Product>> {
+  + getContent(): String
+}
+
+class Blank <<ConcreteProduct>> {
+  - guest: String
+  - room: String
+  + Blank(guest: String, room: String)
+  + getContent(): String
+}
+
+class Letter <<ConcreteProduct>> {
+  - guest: String
+  - room: String
+  + Letter(guest: String, room: String)
+  + getContent(): String
+}
+
+class File <<ConcreteProduct>> {
+  - guest: String
+  - room: String
+  + File(guest: String, room: String)
+  + getContent(): String
+}
+
+class OnlineMessage <<ConcreteProduct>> {
+  - guest: String
+  - room: String
+  + OnlineMessage(guest: String, room: String)
+  + getContent(): String
+}
+
+' ===================== ТВОРЦІ =====================
+abstract class Creator <<Creator>> {
+  - channelName: String
+  # Creator(channelName: String)
+  # {abstract} createConfirmation(guest: String, room: String): Confirmation
+  + {final} confirmBooking(guest: String, room: String): void
+}
+
+class ReceptionCreator <<ConcreteCreator>> {
+  + ReceptionCreator()
+  # createConfirmation(guest: String, room: String): Confirmation
+}
+
+class SiteCreator <<ConcreteCreator>> {
+  + SiteCreator()
+  # createConfirmation(guest: String, room: String): Confirmation
+}
+
+class TourOperatorCreator <<ConcreteCreator>> {
+  + TourOperatorCreator()
+  # createConfirmation(guest: String, room: String): Confirmation
+}
+
+class OnlineServiceCreator <<ConcreteCreator>> #E8F5E9 {
+  + OnlineServiceCreator()
+  # createConfirmation(guest: String, room: String): Confirmation
+}
+
+' ===================== ДОПОМІЖНІ =====================
+class Logger <<Utility>> {
+  - {static} minutes: int
+  + {static} log(source: String, event: String): void
+}
+
+class Main <<Client>> {
+  + {static} main(args: String[]): void
+  - {static} confirmViaExistingChannels(): void
+  - {static} connectNewChannel(): void
+  - {static} confirmViaNewChannel(): void
+}
+
+' ===================== ЗВ'ЯЗКИ =====================
+' Реалізація інтерфейсу продуктами
+Blank ..|> Confirmation
+Letter ..|> Confirmation
+File ..|> Confirmation
+OnlineMessage ..|> Confirmation
+
+' Спадкування творців
+ReceptionCreator --|> Creator
+SiteCreator --|> Creator
+TourOperatorCreator --|> Creator
+OnlineServiceCreator --|> Creator
+
+' Творець залежить лише від інтерфейсу продукту
+Creator ..> Confirmation : <<uses>>\nотримує через\nфабричний метод
+
+' Кожен конкретний творець створює свій продукт
+ReceptionCreator "1" ..> "0..*" Blank : <<creates>>
+SiteCreator "1" ..> "0..*" Letter : <<creates>>
+TourOperatorCreator "1" ..> "0..*" File : <<creates>>
+OnlineServiceCreator "1" ..> "0..*" OnlineMessage : <<creates>>
+
+' Клієнт працює з творцями через абстракцію
+Main ..> Creator : <<uses>>\n1..* каналів
+Main ..> OnlineServiceCreator : <<creates>>
+Main ..> ReceptionCreator : <<creates>>
+Main ..> SiteCreator : <<creates>>
+Main ..> TourOperatorCreator : <<creates>>
+
+' Журнал
+Creator ..> Logger : <<uses>>
+Main ..> Logger : <<uses>>
+
+' ===================== ПРИМІТКИ =====================
+note right of Creator
+  **Роль: Creator.**
+  confirmBooking() — загальний процес
+  (перевірка → фіксація → створення →
+  надсилання), описаний один раз.
+  createConfirmation() — фабричний метод.
+end note
+
+note right of Confirmation
+  **Роль: Product.**
+  Спільна абстракція, яку знає Creator.
+end note
+
+note bottom of OnlineServiceCreator
+  Новий канал: додано два класи
+  (OnlineServiceCreator + OnlineMessage),
+  Creator не змінювався.
+end note
+
+@enduml
