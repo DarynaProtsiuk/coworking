@@ -1,0 +1,49 @@
+
+@startuml
+title Завдання 3 — Adapter (Електронні замки)
+
+interface LockSystem <<Target>> {
+    +programAccess(roomNumber: int, checkoutTime: LocalDateTime): boolean
+}
+
+class ElectronicLock <<Adaptee>> {
+    +programLock(roomCode: String, expirationSeconds: long): boolean
+}
+
+class LockAdapter <<Adapter>> {
+    -lock: ElectronicLock
+    +LockAdapter(lock: ElectronicLock)
+    +programAccess(roomNumber: int, checkoutTime: LocalDateTime): boolean
+}
+
+class SecondVendorLock <<Adaptee>> {
+    +setRoomPermission(floor: int, wing: int, room: int, validUntil: long): boolean
+}
+
+class SecondLockAdapter <<Adapter>> {
+    -lock: SecondVendorLock
+    +SecondLockAdapter(lock: SecondVendorLock)
+    +programAccess(roomNumber: int, checkoutTime: LocalDateTime): boolean
+}
+
+class Reception <<Client>> {
+    -lockSystem: LockSystem
+    +Reception(lockSystem: LockSystem)
+    +programGuestAccess(roomNumber: int, checkoutTime: LocalDateTime): void
+}
+
+class Main <<Demo>> {
+    +main(args: String[]): void
+}
+
+LockSystem <|.. LockAdapter
+LockSystem <|.. SecondLockAdapter
+
+LockAdapter --> "1" ElectronicLock : використовує
+SecondLockAdapter --> "1" SecondVendorLock : використовує
+Reception --> "1" LockSystem : працює через
+
+Main ..> Reception : створює
+Main ..> LockAdapter : створює
+Main ..> SecondLockAdapter : створює
+@enduml
