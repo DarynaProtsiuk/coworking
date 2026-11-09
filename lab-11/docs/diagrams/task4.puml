@@ -1,0 +1,80 @@
+
+@startuml
+title Завдання 4 — Доступ до служби розрахунків (Proxy)
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+interface BillingService <<Subject>> {
+    +charge(employee: Employee, room: int, service: String, amount: double): void
+    +viewBill(employee: Employee, room: int): void
+    +refund(employee: Employee, room: int, amount: double): void
+}
+
+class RealBillingService <<RealSubject>> {
+    +charge(employee: Employee, room: int, service: String, amount: double): void
+    +viewBill(employee: Employee, room: int): void
+    +refund(employee: Employee, room: int, amount: double): void
+}
+
+class BillingServiceProxy <<Proxy>> {
+    -realService: RealBillingService
+    -canView(role: Role): boolean
+    -canRefund(role: Role): boolean
+    +BillingServiceProxy()
+    +charge(employee: Employee, room: int, service: String, amount: double): void
+    +viewBill(employee: Employee, room: int): void
+    +refund(employee: Employee, room: int, amount: double): void
+}
+
+class Employee <<Domain>> {
+    -name: String
+    -role: Role
+    +Employee(name: String, role: Role)
+    +getName(): String
+    +getRole(): Role
+}
+
+enum Role {
+    WAITER
+    RECEPTIONIST
+    ACCOUNTANT
+    SPA
+    RENTAL
+}
+
+class AuditLog <<Audit>> {
+    {static} +log(employee: String, operation: String, result: String): void
+}
+
+class Main <<Client>> {
+    {static} +main(args: String[]): void
+}
+
+BillingService <|.. RealBillingService
+BillingService <|.. BillingServiceProxy
+
+BillingServiceProxy "1" *-- "1" RealBillingService : делегує виклики
+
+Employee "1" --> "1" Role : має роль
+
+BillingServiceProxy ..> Employee : перевіряє права
+BillingServiceProxy ..> AuditLog : записує операції
+
+Main ..> BillingService : використовує
+Main ..> Employee : створює
+
+note right of BillingServiceProxy
+  Перевіряє права працівників.
+  Нарахування доступне всім.
+  Перегляд рахунку та повернення
+  доступні лише рецепції
+  та бухгалтерії.
+end note
+
+note bottom of AuditLog
+  Фіксує всі операції
+  та ім'я працівника.
+end note
+
+@enduml
