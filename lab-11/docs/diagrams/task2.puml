@@ -1,0 +1,48 @@
+@startuml
+class ReceptionDesk <<Client>> {
+  -facade: CheckInFacade
+  +checkInGuest(guestName: String, bookingId: String)
+}
+class OnlineCheckIn <<Client>> {
+  -facade: CheckInFacade
+  +checkInGuest(guestName: String, bookingId: String)
+}
+class CheckInFacade <<Facade>> {
+  -bookingVerification: BookingVerificationService
+  -guestRegistration: GuestRegistrationService
+  -roomAssignment: RoomAssignmentService
+  -keyCard: KeyCardService
+  -billing: BillingService
+  -housekeeping: HousekeepingService
+  +checkIn(guestName: String, bookingId: String): int
+  +getKeyCardService(): KeyCardService
+}
+class BookingVerificationService <<Subsystem>> {
+  +verify(bookingId: String): boolean
+}
+class GuestRegistrationService <<Subsystem>> {
+  +register(guestName: String)
+}
+class RoomAssignmentService <<Subsystem>> {
+  +assign(guestName: String): int
+}
+class KeyCardService <<Subsystem>> {
+  +issue(guestName: String, room: int)
+  +reissue(guestName: String, room: int)
+}
+class BillingService <<Subsystem>> {
+  +openAccount(guestName: String, room: int)
+}
+class HousekeepingService <<Subsystem>> {
+  +notifyRoomOccupied(room: int)
+}
+
+ReceptionDesk --> "1" CheckInFacade
+OnlineCheckIn --> "1" CheckInFacade
+CheckInFacade *--> "1" BookingVerificationService
+CheckInFacade *--> "1" GuestRegistrationService
+CheckInFacade *--> "1" RoomAssignmentService
+CheckInFacade *--> "1" KeyCardService
+CheckInFacade *--> "1" BillingService
+CheckInFacade *--> "1" HousekeepingService
+@enduml

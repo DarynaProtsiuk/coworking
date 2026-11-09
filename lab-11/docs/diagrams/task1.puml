@@ -1,0 +1,33 @@
+@startuml
+interface Room <<Component>> {
+  +getDescription(): String
+  +getPrice(): double
+}
+class StandardRoom <<ConcreteComponent>> {
+  -BASE_PRICE: double {static}
+  +getDescription(): String
+  +getPrice(): double
+}
+abstract class RoomServiceDecorator <<Decorator>> {
+  #wrapped: Room
+  #RoomServiceDecorator(wrapped: Room)
+  +getDescription(): String
+  +getPrice(): double
+}
+class BreakfastService <<ConcreteDecorator>> {
+  -COST: double {static}
+}
+class MountainViewService <<ConcreteDecorator>>
+class LateCheckoutService <<ConcreteDecorator>>
+class ParkingService <<ConcreteDecorator>>
+class BabyCotService <<ConcreteDecorator>>
+
+Room <|.. StandardRoom
+Room <|.. RoomServiceDecorator
+RoomServiceDecorator o--> "1" Room : wrapped
+RoomServiceDecorator <|-- BreakfastService
+RoomServiceDecorator <|-- MountainViewService
+RoomServiceDecorator <|-- LateCheckoutService
+RoomServiceDecorator <|-- ParkingService
+RoomServiceDecorator <|-- BabyCotService
+@enduml
