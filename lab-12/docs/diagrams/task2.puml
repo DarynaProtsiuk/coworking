@@ -1,0 +1,65 @@
+@startuml
+skinparam classAttributeIconSize 0
+title Завдання 2. Склад пакетів проживання (Composite)
+
+package "task1_lab12" {
+  class Logger {
+    -{static} FORMAT: DateTimeFormatter
+    +{static} log(source: String, event: String): void
+  }
+}
+
+package "task2_lab12" {
+
+  interface PackageComponent <<Component>> {
+    +getName(): String
+    +getPrice(): int
+    +getServices(): List<String>
+    +printTree(indent: String): void
+  }
+
+  class Service <<Leaf>> {
+    -name: String
+    -price: int
+    +Service(name: String, price: int)
+    +getName(): String
+    +getPrice(): int
+    +getServices(): List<String>
+    +printTree(indent: String): void
+  }
+
+  class ServicePackage <<Composite>> {
+    -name: String
+    -parts: List<PackageComponent>
+    +ServicePackage(name: String)
+    +add(part: PackageComponent): void
+    +getName(): String
+    +getPrice(): int
+    +getServices(): List<String>
+    +printTree(indent: String): void
+  }
+
+  class Main <<Client>> {
+    +{static} main(args: String[]): void
+    -{static} task2Composite(): void
+    -{static} printSummary(component: PackageComponent): void
+  }
+}
+
+Service ..|> PackageComponent
+ServicePackage ..|> PackageComponent
+ServicePackage "1" o-- "0..*" PackageComponent : parts
+Main ..> ServicePackage : <<use>>
+Main ..> Service : <<use>>
+Main ..> PackageComponent : <<use>>
+Service ..> Logger : <<use>>
+ServicePackage ..> Logger : <<use>>
+Main ..> Logger : <<use>>
+
+note bottom of ServicePackage
+  getPrice(), getServices(), printTree():
+  проходить по списку parts і викликає
+  той самий метод у кожної частини
+  (рекурсія).
+end note
+@enduml

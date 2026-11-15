@@ -1,0 +1,97 @@
+@startuml
+skinparam classAttributeIconSize 0
+title Завдання 1. Календар зайнятості номерів (Flyweight)
+
+package "task1_lab12" {
+
+  class RoomType <<Flyweight>> {
+    -name: String
+    -description: String
+    -area: int
+    -facilities: String[]
+    -photos: String[]
+    -basePrice: int
+    +RoomType(name: String, description: String, area: int, facilities: String[], photos: String[], basePrice: int)
+    +getName(): String
+    +getDescription(): String
+    +getArea(): int
+    +getFacilities(): String[]
+    +getPhotos(): String[]
+    +getBasePrice(): int
+    +toString(): String
+  }
+
+  class RoomTypeFactory <<Flyweight Factory>> {
+    -{static} cache: Map<String, RoomType>
+    +{static} getRoomType(name: String): RoomType
+    +{static} getCreatedCount(): int
+    -{static} createRoomType(name: String): RoomType
+  }
+
+  class CalendarEntry <<Context>> {
+    -roomNumber: int
+    -date: LocalDate
+    -status: BookingStatus
+    -type: RoomType
+    +CalendarEntry(roomNumber: int, date: LocalDate, status: BookingStatus, type: RoomType)
+    +getRoomNumber(): int
+    +getDate(): LocalDate
+    +getStatus(): BookingStatus
+    +setStatus(status: BookingStatus): void
+    +getType(): RoomType
+    +describe(): String
+  }
+
+  enum BookingStatus <<Стан запису>> {
+    FREE
+    BOOKED
+    OCCUPIED
+    --
+    -label: String
+    +getLabel(): String
+  }
+
+  class HotelCalendar <<Client>> {
+    -entries: List<CalendarEntry>
+    -nights: int
+    +build(rooms: int, nights: int, startDate: LocalDate): void
+    +getEntry(room: int, night: int): CalendarEntry
+    +size(): int
+    -categoryFor(room: int): String
+  }
+
+  class Logger {
+    -{static} FORMAT: DateTimeFormatter
+    +{static} log(source: String, event: String): void
+  }
+
+  class Main <<Runner>> {
+    +{static} main(args: String[]): void
+    -{static} task1Flyweight(): void
+  }
+}
+
+RoomTypeFactory "1" o-- "0..*" RoomType : cache
+CalendarEntry "*" --> "1" RoomType : type
+CalendarEntry "*" --> "1" BookingStatus : status
+HotelCalendar "1" *-- "*" CalendarEntry : entries
+HotelCalendar ..> RoomTypeFactory : <<use>>
+Main ..> HotelCalendar : <<use>>
+Main ..> RoomTypeFactory : <<use>>
+RoomTypeFactory ..> Logger : <<use>>
+HotelCalendar ..> Logger : <<use>>
+Main ..> Logger : <<use>>
+
+note right of RoomType
+  Внутрішній (спільний) стан:
+  зберігається один раз
+  і є незмінним.
+end note
+
+note right of CalendarEntry
+  Зовнішній (унікальний) стан:
+  кімната, дата, статус.
+  Категорію не копіює,
+  а лише посилається на неї.
+end note
+@enduml
