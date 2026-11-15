@@ -1,9 +1,15 @@
 package task3;
+import task2_lab12.*;
+import task1_lab12.*;
+
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 public class Main {
     public static void main(String[] args) {
+        task1();
+        task2();
         task3();
     }
 
@@ -14,6 +20,46 @@ public class Main {
     public static void log(String source, String event) {
         System.out.println("[" + time.format(FORMAT) + "] [" + source + "] " + event);
         time = time.plusSeconds(1);
+    }
+
+    private static void task1() {
+        Logger.log("Main", "Завдання 1: календар зайнятості номерів");
+
+        HotelCalendar calendar = new HotelCalendar();
+        calendar.build(60, 365, LocalDate.of(2027, 1, 1));
+
+        Logger.log("Main", "Записів календаря: " + calendar.size());
+        Logger.log("Main", "Об'єктів категорій: " + RoomTypeFactory.getCreatedCount());
+
+        CalendarEntry first = calendar.getEntry(5, 0);
+        CalendarEntry second = calendar.getEntry(5, 200);
+        Logger.log("Main", "Запис 1: " + first.describe());
+        Logger.log("Main", "Запис 2: " + second.describe());
+        Logger.log("Main", "Посилаються на той самий об'єкт категорії (==): "
+                + (first.getType() == second.getType()));
+    }
+
+    private static void task2() {
+        Logger.log("Main", "Завдання 2: склад пакетів проживання");
+
+        ServicePackage kidsClub = new ServicePackage("Дитячий клуб");
+        kidsClub.add(new Service("Заняття", 1800));
+        kidsClub.add(new Service("Екскурсія", 900));
+
+        ServicePackage familyWeek = new ServicePackage("Сімейний тиждень");
+        familyWeek.add(new Service("Проживання", 12000));
+        familyWeek.add(new Service("Харчування", 5600));
+        familyWeek.add(kidsClub);
+
+        familyWeek.printTree("");
+
+        printSummary(familyWeek);
+        printSummary(kidsClub);
+    }
+
+    private static void printSummary(PackageComponent component) {
+        Logger.log("Main", "«" + component.getName() + "»: вартість "
+                + component.getPrice() + " грн, послуги: " + component.getServices());
     }
 
     public static void task3 () {
