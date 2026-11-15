@@ -1,0 +1,86 @@
+@startuml
+title Завдання 3 — Діаграма класів (керування Smart Home)
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+package "task3" {
+  interface IDevice <<Interface>> {
+    +turnOn() : String
+    +turnOff() : String
+  }
+
+  class AirConditioner <<Concrete Device>> {
+    +turnOn() : String
+    +turnOff() : String
+  }
+
+  class Lighting <<Concrete Device>> {
+    +turnOn() : String
+    +turnOff() : String
+  }
+
+  class Curtains <<Concrete Device>> {
+    +turnOn() : String
+    +turnOff() : String
+  }
+
+  class HeatedFloor <<Concrete Device>> {
+    +turnOn() : String
+    +turnOff() : String
+  }
+
+  class ControlDevice <<Abstraction / Controller>> {
+    -device : IDevice
+    +ControlDevice(device : IDevice)
+    +setDevice(device : IDevice) : void
+    +turnOn() : String
+    +turnOff() : String
+  }
+
+  class WallPanel <<Refined Abstraction>>
+  class MobileApp <<Refined Abstraction>>
+  class RemoteControl <<Refined Abstraction>>
+
+  class Main <<Client>> {
+    {static} -FORMAT : DateTimeFormatter
+    {static} -time : LocalTime
+    {static} +main(args : String[]) : void
+    {static} +log(source : String, event : String) : void
+    {static} +task3() : void
+  }
+}
+
+IDevice <|.. AirConditioner
+IDevice <|.. Lighting
+IDevice <|.. Curtains
+IDevice <|.. HeatedFloor
+
+ControlDevice --> "1" IDevice : device
+ControlDevice <|-- WallPanel
+ControlDevice <|-- MobileApp
+ControlDevice <|-- RemoteControl
+
+Main ..> WallPanel : creates / uses
+Main ..> MobileApp : creates / uses
+Main ..> RemoteControl : creates / uses
+Main ..> AirConditioner : creates
+Main ..> Curtains : creates
+Main ..> HeatedFloor : creates
+Main ..> LocalTime : uses
+Main ..> DateTimeFormatter : uses
+
+note right of ControlDevice
+  Роль Bridge:
+  відокремлює інтерфейс керування
+  від конкретного пристрою.
+  Пристрій можна змінювати через setDevice().
+end note
+
+note bottom of IDevice
+  Implementors define device-specific
+  ON/OFF behavior.
+end note
+@enduml
