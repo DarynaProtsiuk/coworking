@@ -2,12 +2,12 @@ package task3;
 
 public class Lighting  implements IDevice {
     @Override
-    public void turnOn(){
-        System.out.println("Turning lighting...");
+    public String turnOn(){
+       return ("Turning lighting...");
     }
 
     @Override
-    public void turnOff(){
-        System.out.println("Turning off lighting...");
+    public String turnOff(){
+        return ("Turning off lighting...");
     }
 }

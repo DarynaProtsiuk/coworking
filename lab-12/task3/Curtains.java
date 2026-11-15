@@ -2,12 +2,12 @@ package task3;
 
 public class Curtains  implements IDevice {
     @Override
-    public void turnOn(){
-        System.out.println("Turning curtains...");
+    public String turnOn(){
+        return ("Curtains are closed");
     }
 
     @Override
-    public void turnOff(){
-        System.out.println("Turning off curtains...");
+    public String turnOff(){
+        return ("Curtains are open");
     }
 }

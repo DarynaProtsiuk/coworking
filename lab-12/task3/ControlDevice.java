@@ -1,17 +1,21 @@
 package task3;
 
-abstract class ControlDevice {
+public class ControlDevice {
     private IDevice device;
 
     public ControlDevice(IDevice device) {
         this.device = device;
     }
 
-    public void turnOn(){
-        device.turnOn();
+    public void setDevice(IDevice device) {
+        this.device = device;
     }
 
-    public void turnOff(){
-        device.turnOff();
+    public String turnOn(){
+        return device.turnOn();
+    }
+
+    public String turnOff(){
+        return device.turnOff();
     }
 }
