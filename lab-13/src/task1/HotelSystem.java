@@ -2,8 +2,7 @@ package task1;
 
 import task2.Logger;
 
-public
-class HotelSystem {
+public class HotelSystem {
 
     private Handler firstHandler;
 

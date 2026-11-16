@@ -1,0 +1,123 @@
+
+@startuml
+title Завдання 1 — Готель «Карпатські вершини»\nChain of Responsibility
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+enum RequestType {
+    TOWELS
+    WAKE_UP
+    CLEANING
+    TECHNICAL
+    COMPLAINT
+    UNKNOWN
+}
+
+class GuestRequest {
+    - type: RequestType
+    - description: String
+    + GuestRequest(type: RequestType, description: String)
+    + getType(): RequestType
+    + getDescription(): String
+}
+
+abstract class Handler <<Handler>> {
+    # nextHandler: Handler
+    # name: String
+    + Handler(name: String)
+    + setNext(handler: Handler): void
+    + handleRequest(request: GuestRequest): void
+    # canHandle(request: GuestRequest): boolean
+    # process(request: GuestRequest): void
+}
+
+class ReceptionHandler <<Concrete Handler>> {
+    - nightShift: boolean
+    + ReceptionHandler(nightShift: boolean)
+    # canHandle(request: GuestRequest): boolean
+    # process(request: GuestRequest): void
+}
+
+class MaidHandler <<Concrete Handler>> {
+    + MaidHandler()
+    # canHandle(request: GuestRequest): boolean
+    # process(request: GuestRequest): void
+}
+
+class TechnicalHandler <<Concrete Handler>> {
+    + TechnicalHandler()
+    # canHandle(request: GuestRequest): boolean
+    # process(request: GuestRequest): void
+}
+
+class ManagerHandler <<Concrete Handler>> {
+    + ManagerHandler()
+    # canHandle(request: GuestRequest): boolean
+    # process(request: GuestRequest): void
+}
+
+class HotelSystem <<Client>> {
+    - firstHandler: Handler
+    + setDayShift(): void
+    + setNightShift(): void
+    + sendRequest(request: GuestRequest): void
+}
+
+class Logger <<Utility>> {
+    - {static} FORMAT: DateTimeFormatter
+    - {static} time: LocalTime
+    + {static} now(): String
+    + {static} log(source: String, event: String): void
+}
+
+' Наслідування: конкретні обробники реалізують базовий Handler
+Handler <|-- ReceptionHandler
+Handler <|-- MaidHandler
+Handler <|-- TechnicalHandler
+Handler <|-- ManagerHandler
+
+' Ланцюг обробників
+Handler "0..1" --> "0..1" Handler : nextHandler
+
+' HotelSystem створює та налаштовує ланцюг
+HotelSystem --> "1" Handler : firstHandler
+HotelSystem ..> ReceptionHandler : створює
+HotelSystem ..> MaidHandler : створює
+HotelSystem ..> TechnicalHandler : створює
+HotelSystem ..> ManagerHandler : створює
+
+' Запит передається обробникам
+Handler ..> GuestRequest : обробляє
+GuestRequest --> RequestType : тип запиту
+
+' Журналювання
+Handler ..> Logger : записує події
+ReceptionHandler ..> Logger
+MaidHandler ..> Logger
+TechnicalHandler ..> Logger
+ManagerHandler ..> Logger
+
+note right of ReceptionHandler
+  Денна зміна:
+  рушники, будильник
+
+  Нічна зміна:
+  також приймає запити
+  на прибирання до ранку
+end note
+
+note bottom of Handler
+  Якщо обробник не може виконати
+  запит, він передає його наступному.
+  Якщо наступного немає — повідомляє
+  гостя, що запит не оброблено.
+end note
+
+note bottom of HotelSystem
+  Клієнт патерну:
+  налаштовує денний або нічний
+  ланцюг обробників
+end note
+
+@enduml
