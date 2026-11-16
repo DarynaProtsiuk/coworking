@@ -1,7 +1,7 @@
 package task2;
 
 public class ChargeCommand implements Command {
-    private final GuestBill bill;
+    private final GuestBill bill;  // рахунок, у який треба записати
     private final String department;
     private final String service;
     private final int amount;

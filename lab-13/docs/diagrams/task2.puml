@@ -1,0 +1,113 @@
+@startuml
+skinparam classAttributeIconSize 0
+title Завдання 2. Нарахування послуг на рахунок гостя (Command)
+
+package "task2_lab13" {
+
+  interface Command <<Command>> {
+    +execute(): void
+    +undo(): void
+    +getDescription(): String
+  }
+
+  class ChargeCommand <<ConcreteCommand>> {
+    -bill: GuestBill
+    -department: String
+    -service: String
+    -amount: int
+    -executed: boolean
+    -reversed: boolean
+    +ChargeCommand(bill: GuestBill, department: String, service: String, amount: int)
+    +execute(): void
+    +undo(): void
+    +getDescription(): String
+    -source(): String
+  }
+
+  class BillingService <<Invoker>> {
+    -executed: List<Command>
+    +execute(command: Command): void
+    +reverse(command: Command): void
+  }
+
+  class GuestBill <<Receiver>> {
+    -guestName: String
+    -entries: List<ChargeEntry>
+    +GuestBill(guestName: String)
+    +addEntry(entry: ChargeEntry): void
+    +getBalance(): int
+    +printBill(): void
+    +printHistory(): void
+  }
+
+  class ChargeEntry <<Запис історії>> {
+    -department: String
+    -description: String
+    -amount: int
+    -time: String
+    -type: OperationType
+    +ChargeEntry(department: String, description: String, amount: int, time: String, type: OperationType)
+    +getAmount(): int
+    +toString(): String
+  }
+
+  enum OperationType <<Вид операції>> {
+    CHARGE
+    REVERSAL
+    --
+    -label: String
+    +getLabel(): String
+  }
+
+  class Logger {
+    -{static} FORMAT: DateTimeFormatter
+    -{static} time: LocalTime
+    +{static} now(): String
+    +{static} log(source: String, event: String): void
+  }
+
+  class Main <<Client>> {
+    +{static} main(args: String[]): void
+    -{static} task2Command(): void
+  }
+}
+
+ChargeCommand ..|> Command
+BillingService "1" o-- "0..*" Command : executed
+ChargeCommand "*" --> "1" GuestBill : bill
+GuestBill "1" *-- "0..*" ChargeEntry : entries
+ChargeEntry "*" --> "1" OperationType : type
+ChargeCommand ..> ChargeEntry : <<create>>
+
+Main ..> BillingService : <<use>>
+Main ..> ChargeCommand : <<create>>
+Main ..> GuestBill : <<create>>
+
+GuestBill ..> Logger : <<use>>
+ChargeCommand ..> Logger : <<use>>
+BillingService ..> Logger : <<use>>
+Main ..> Logger : <<use>>
+
+note right of Command
+  Спільний «договір» для всіх дій:
+  уміє виконатися і скасуватися.
+  Виконавець залежить лише від нього.
+end note
+
+note bottom of ChargeCommand
+  execute(): додає в рахунок запис зі знаком «+».
+  undo(): НЕ видаляє запис, а додає
+  зворотний (сторно) зі знаком «−».
+end note
+
+note bottom of GuestBill
+  Записи лише додаються, видалення немає.
+  Баланс рахується як сума всіх записів.
+end note
+
+note left of BillingService
+  Приймає команду, запускає її
+  і запам'ятовує виконані.
+  Про зміст команди нічого не знає.
+end note
+@enduml
