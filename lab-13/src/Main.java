@@ -1,8 +1,29 @@
 import task2.*;
+import task1.*;
 
 public class Main {
     public static void main(String[] args) {
         task2();
+        task1();
+    }
+
+    public static void task1() {
+        System.out.println("\n TASK 1");
+
+        HotelSystem hotel = new HotelSystem();
+
+        hotel.setDayShift();
+
+        hotel.sendRequest(new GuestRequest(RequestType.TOWELS, "Гостю потрібні рушники"));
+        hotel.sendRequest(new GuestRequest(RequestType.CLEANING, "Потрібно прибрати номер"));
+        hotel.sendRequest(new GuestRequest(RequestType.TECHNICAL, "Не працює кондиціонер"));
+        hotel.sendRequest(new GuestRequest(RequestType.COMPLAINT, "Скарга на обслуговування"));
+
+        hotel.setNightShift();
+
+        hotel.sendRequest(new GuestRequest(RequestType.CLEANING, "Гість просить прибрати номер"));
+
+        hotel.sendRequest(new GuestRequest(RequestType.UNKNOWN, "Гість просить організувати політ на Марс"));
     }
 
     private static void task2() {
