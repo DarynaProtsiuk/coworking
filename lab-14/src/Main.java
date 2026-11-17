@@ -1,3 +1,4 @@
+import task1.*;
 import task2.*;
 
 public class Main {
@@ -11,10 +12,40 @@ public class Main {
     private static SmartRoomMediator mediator;
 
     public static void main(String[] args) {
+        runGuestCheckOut();
         setUp();
         scenarioWindowOpened();
         scenarioGuestLeaves();
         scenarioEvening();
+    }
+
+    private static void runGuestCheckOut() {
+        Room room = new Room(101);
+
+        HousekeepingService housekeeping = new HousekeepingService();
+        AccountingService accounting = new AccountingService();
+        KeyLockSystem locks = new KeyLockSystem();
+        MarketingService marketing = new MarketingService();
+        MinibarService minibar = new MinibarService();
+
+        System.out.println("Крок 1: покоївки, бухгалтерія, замки");
+        Logger.setTime("11:00");
+        room.subscribe(housekeeping);
+        room.subscribe(accounting);
+        room.subscribe(locks);
+        room.checkOut("Іван Петренко", false);
+
+        System.out.println("\nКрок 2: підключаємо маркетинг (і мінібар), виїзд з відгуком");
+        Logger.setTime("12:30");
+        room.subscribe(marketing);
+        room.subscribe(minibar);
+        room.checkOut("Олена Коваль", true);
+
+        System.out.println("\nКрок 3: ніч, покоївки відписуються");
+        Logger.setTime("23:30");
+        room.unsubscribe(housekeeping);
+        room.checkOut("Андрій Мельник", false);
+        System.out.println("==================================================");
     }
 
     private static void setUp() {
