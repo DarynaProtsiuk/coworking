@@ -1,0 +1,47 @@
+@startuml task1-observer
+skinparam classAttributeIconSize 0
+title Завдання 1. Виїзд гостя (Observer)
+
+class Room <<Subject>> {
+  - number : int
+  - observers : List<SubscriberInterface>
+  + subscribe(observer : SubscriberInterface) : void
+  + unsubscribe(observer : SubscriberInterface) : void
+  + checkOut(guestName : String, leftReview : boolean) : void
+}
+
+interface SubscriberInterface <<Observer>> {
+  + getName() : String
+  + onCheckOut(event : CheckOutEvent) : void
+}
+
+class CheckOutEvent <<Event>> {
+  - roomNumber : int
+  - guestName : String
+  - leftReview : boolean
+  + getRoomNumber() : int
+  + getGuestName() : String
+  + hasLeftReview() : boolean
+}
+
+class HousekeepingService <<ConcreteObserver>>
+class MinibarService <<ConcreteObserver>>
+class AccountingService <<ConcreteObserver>>
+class KeyLockSystem <<ConcreteObserver>>
+class MarketingService <<ConcreteObserver>>
+
+Room "1" o-right-> "0..*" SubscriberInterface : observers
+Room ..> CheckOutEvent : creates
+SubscriberInterface ..> CheckOutEvent : uses
+
+SubscriberInterface <|.. HousekeepingService
+SubscriberInterface <|.. MinibarService
+SubscriberInterface <|.. AccountingService
+SubscriberInterface <|.. KeyLockSystem
+SubscriberInterface <|.. MarketingService
+
+note bottom of KeyLockSystem
+  Кожна служба реалізує getName() та onCheckOut(event).
+  Усі класи пишуть у журнал через Logger.log(source, message).
+end note
+@enduml
