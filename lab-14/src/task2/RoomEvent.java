@@ -1,0 +1,5 @@
+package task2;
+
+public enum RoomEvent {
+    WINDOW_OPENED, WINDOW_CLOSED, GUEST_ENTERED, GUEST_LEFT, EVENING_CAME
+}

@@ -1,0 +1,96 @@
+@startuml task2-smart-room
+title Завдання 2. Розумний номер: шаблон Mediator
+left to right direction
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle rectangle
+hide empty members
+
+enum RoomEvent <<Event>> {
+  WINDOW_OPENED
+  WINDOW_CLOSED
+  GUEST_ENTERED
+  GUEST_LEFT
+  EVENING_CAME
+}
+
+interface RoomMediator <<Mediator>> {
+  + notify(sender: Device, event: RoomEvent)
+}
+
+class SmartRoomMediator <<ConcreteMediator>> {
+  - conditioner: AirConditioner
+  - lights: Lights
+  - curtains: Curtains
+  - floorHeating: FloorHeating
+  + notify(sender: Device, event: RoomEvent)
+}
+
+abstract class Device <<Colleague>> {
+  # name: String
+  # mediator: RoomMediator
+  + setMediator(m: RoomMediator)
+  + getName(): String
+}
+
+package "Датчики (повідомляють)" {
+  class WindowSensor <<ConcreteColleague>> {
+    + open()
+    + close()
+  }
+  class PresenceSensor <<ConcreteColleague>> {
+    + guestEnters()
+    + guestLeaves()
+  }
+  class TimeSensor <<ConcreteColleague>> {
+    + eveningComes()
+  }
+}
+
+package "Виконавці (слухаються)" {
+  class AirConditioner <<ConcreteColleague>> {
+    - on: boolean
+    + turnOn()
+    + turnOff()
+  }
+  class Lights <<ConcreteColleague>> {
+    + turnOn()
+    + turnOff()
+    + nightMode()
+  }
+  class Curtains <<ConcreteColleague>> {
+    + close()
+  }
+  class FloorHeating <<ConcreteColleague>> {
+    + turnOff()
+  }
+}
+
+RoomMediator <|.. SmartRoomMediator
+RoomMediator ..> RoomEvent
+
+Device "*" --> "1" RoomMediator : mediator
+
+Device <|-- WindowSensor
+Device <|-- PresenceSensor
+Device <|-- TimeSensor
+Device <|-- AirConditioner
+Device <|-- Lights
+Device <|-- Curtains
+Device <|-- FloorHeating
+
+SmartRoomMediator "1" o-- "1" AirConditioner
+SmartRoomMediator "1" o-- "1" Lights
+SmartRoomMediator "1" o-- "1" Curtains
+SmartRoomMediator "1" o-- "0..1" FloorHeating
+
+note bottom of SmartRoomMediator
+  Усі правила взаємодії
+  тільки тут (switch у notify)
+end note
+
+note bottom of FloorHeating
+  Новий пристрій: старі
+  класи не змінюються
+end note
+@enduml
