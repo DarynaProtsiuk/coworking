@@ -1,0 +1,97 @@
+@startuml
+title Template Method: підготовка номерів готелю «Карпатські вершини»
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype ortho
+
+abstract class RoomPreparation <<AbstractClass>> {
+  # roomNumber : String {readOnly}
+  # RoomPreparation(roomNumber : String)
+  + prepare() : void  <<final>>
+  # cleaning() : void
+  # changeLinen() : void
+  # finalInspection() : void
+  # {abstract} restockMinibar() : void
+  # {abstract} checkEquipment() : void
+  # {abstract} getCategoryName() : String
+  # prepareWelcomeBasket() : void  <<hook>>
+  # lightFireplace() : void  <<hook>>
+  # source() : String
+}
+
+class StandardRoomPreparation <<ConcreteClass>> {
+  + StandardRoomPreparation(roomNumber : String)
+  # getCategoryName() : String
+  # restockMinibar() : void
+  # checkEquipment() : void
+}
+
+class LuxuryRoomPreparation <<ConcreteClass>> {
+  + LuxuryRoomPreparation(roomNumber : String)
+  # getCategoryName() : String
+  # restockMinibar() : void
+  # checkEquipment() : void
+  # prepareWelcomeBasket() : void
+}
+
+class ChaletPreparation <<ConcreteClass>> {
+  + ChaletPreparation(roomNumber : String)
+  # getCategoryName() : String
+  # restockMinibar() : void
+  # checkEquipment() : void
+  # lightFireplace() : void
+}
+
+class FamilyRoomPreparation <<ConcreteClass>> {
+  + FamilyRoomPreparation(roomNumber : String)
+  # getCategoryName() : String
+  # restockMinibar() : void
+  # checkEquipment() : void
+}
+
+class EventLog <<utility, final>> {
+  - {static} FORMAT : DateTimeFormatter
+  - {static} START_TIME : LocalTime
+  - {static} STEP_MINUTES : int
+  - {static} currentTime : LocalTime
+  - EventLog()
+  + {static} log(source : String, event : String) : void
+  + {static} section(title : String) : void
+  + {static} reset() : void
+}
+
+class Main <<Client>> {
+  + {static} main(args : String[]) : void
+  - {static} scenarioStandard() : void
+  - {static} scenarioLuxuryAndChalet() : void
+  - {static} scenarioFamily() : void
+}
+
+' Успадкування (ConcreteClass -> AbstractClass)
+RoomPreparation <|-- StandardRoomPreparation
+RoomPreparation <|-- LuxuryRoomPreparation
+RoomPreparation <|-- ChaletPreparation
+RoomPreparation <|-- FamilyRoomPreparation
+
+' Залежності
+RoomPreparation ..> EventLog : <<use>> log()
+Main "1" ..> "1..*" RoomPreparation : <<use>> prepare()
+Main ..> StandardRoomPreparation : <<create>>
+Main ..> LuxuryRoomPreparation : <<create>>
+Main ..> ChaletPreparation : <<create>>
+Main ..> FamilyRoomPreparation : <<create>>
+
+note right of RoomPreparation::prepare
+  **Шаблонний метод.**
+  Єдине місце, де задано порядок етапів:
+  cleaning → changeLinen → restockMinibar →
+  checkEquipment → prepareWelcomeBasket →
+  lightFireplace → finalInspection.
+  Підкласи не можуть його змінити (final).
+end note
+
+note bottom of RoomPreparation
+  **Хуки** мають порожню реалізацію за замовчуванням,
+  підкласи перевизначають їх за потреби.
+  **Абстрактні етапи**
