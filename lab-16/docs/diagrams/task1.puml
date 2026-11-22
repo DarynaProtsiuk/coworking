@@ -1,0 +1,204 @@
+@startuml
+title Visitor: операції над нарахуваннями рахунку гостя («Карпатські вершини»)
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+interface Charge <<Element>> {
+  + getTitle() : String
+  + getAmount() : double
+  + accept(visitor : ChargeVisitor) : void
+}
+
+class AccommodationCharge <<ConcreteElement>> {
+  - roomCategory : String {readOnly}
+  - nights : int {readOnly}
+  - ratePerNight : double {readOnly}
+  + AccommodationCharge(roomCategory : String, nights : int, ratePerNight : double)
+  + getRoomCategory() : String
+  + getNights() : int
+  + getTitle() : String
+  + getAmount() : double
+  + accept(visitor : ChargeVisitor) : void
+}
+
+class MealCharge <<ConcreteElement>> {
+  - mealType : String {readOnly}
+  - portions : int {readOnly}
+  - pricePerPortion : double {readOnly}
+  + MealCharge(mealType : String, portions : int, pricePerPortion : double)
+  + getMealType() : String
+  + getPortions() : int
+  + getTitle() : String
+  + getAmount() : double
+  + accept(visitor : ChargeVisitor) : void
+}
+
+class SpaCharge <<ConcreteElement>> {
+  - procedure : String {readOnly}
+  - price : double {readOnly}
+  + SpaCharge(procedure : String, price : double)
+  + getProcedure() : String
+  + getTitle() : String
+  + getAmount() : double
+  + accept(visitor : ChargeVisitor) : void
+}
+
+class RentalCharge <<ConcreteElement>> {
+  - item : String {readOnly}
+  - days : int {readOnly}
+  - pricePerDay : double {readOnly}
+  + RentalCharge(item : String, days : int, pricePerDay : double)
+  + getItem() : String
+  + getDays() : int
+  + getTitle() : String
+  + getAmount() : double
+  + accept(visitor : ChargeVisitor) : void
+}
+
+class TouristTaxCharge <<ConcreteElement>> {
+  - nights : int {readOnly}
+  - taxPerNight : double {readOnly}
+  + TouristTaxCharge(nights : int, taxPerNight : double)
+  + getNights() : int
+  + getTitle() : String
+  + getAmount() : double
+  + accept(visitor : ChargeVisitor) : void
+}
+
+interface ChargeVisitor <<Visitor>> {
+  + visit(charge : AccommodationCharge) : void
+  + visit(charge : MealCharge) : void
+  + visit(charge : SpaCharge) : void
+  + visit(charge : RentalCharge) : void
+  + visit(charge : TouristTaxCharge) : void
+}
+
+class TaxCalculationVisitor <<ConcreteVisitor>> {
+  - {static} ACCOMMODATION_RATE : double {readOnly}
+  - {static} STANDARD_RATE : double {readOnly}
+  - totalTax : double
+  + getTotalTax() : double
+  - applyTax(charge : Charge, rate : double) : void
+  + visit(charge : AccommodationCharge) : void
+  + visit(charge : MealCharge) : void
+  + visit(charge : SpaCharge) : void
+  + visit(charge : RentalCharge) : void
+  + visit(charge : TouristTaxCharge) : void
+}
+
+class BonusPointsVisitor <<ConcreteVisitor>> {
+  - {static} UAH_PER_POINT : int {readOnly}
+  - totalPoints : int
+  + getTotalPoints() : int
+  - addPoints(charge : Charge) : void
+  + visit(charge : AccommodationCharge) : void
+  + visit(charge : MealCharge) : void
+  + visit(charge : SpaCharge) : void
+  + visit(charge : RentalCharge) : void
+  + visit(charge : TouristTaxCharge) : void
+}
+
+class TourOperatorReportVisitor <<ConcreteVisitor>> {
+  - servicesTotal : double
+  - taxesTotal : double
+  + getServicesTotal() : double
+  + getTaxesTotal() : double
+  - addService(category : String, charge : Charge) : void
+  + visit(charge : AccommodationCharge) : void
+  + visit(charge : MealCharge) : void
+  + visit(charge : SpaCharge) : void
+  + visit(charge : RentalCharge) : void
+  + visit(charge : TouristTaxCharge) : void
+}
+
+class GuestBill <<ObjectStructure>> {
+  - guestName : String {readOnly}
+  - charges : List<Charge> {readOnly}
+  + GuestBill(guestName : String)
+  + add(charge : Charge) : void
+  + getTotal() : double
+  + accept(visitor : ChargeVisitor) : void
+  + logState(stage : String) : void
+}
+
+class Logger <<utility, final>> {
+  - {static} FORMAT : DateTimeFormatter {readOnly}
+  - {static} START_TIME : LocalTime {readOnly}
+  - {static} STEP_MINUTES : int {readOnly}
+  - {static} currentTime : LocalTime
+  - Logger()
+  + {static} log(source : String, event : String) : void
+  + {static} section(title : String) : void
+  + {static} reset() : void
+  + {static} money(value : double) : String
+}
+
+class Main <<Client>> {
+  + {static} main(args : String[]) : void
+  - {static} scenarioBillOperations() : void
+}
+
+' Реалізація інтерфейсів
+Charge <|.. AccommodationCharge
+Charge <|.. MealCharge
+Charge <|.. SpaCharge
+Charge <|.. RentalCharge
+Charge <|.. TouristTaxCharge
+
+ChargeVisitor <|.. TaxCalculationVisitor
+ChargeVisitor <|.. BonusPointsVisitor
+ChargeVisitor <|.. TourOperatorReportVisitor
+
+' Агрегація: рахунок містить нарахування, які створюються поза ним
+GuestBill "1" o-- "0..*" Charge : charges
+
+' Залежності Visitor <-> Element (подвійна диспетчеризація)
+Charge ..> ChargeVisitor : <<use>> accept()
+ChargeVisitor ..> AccommodationCharge : <<use>>
+ChargeVisitor ..> MealCharge : <<use>>
+ChargeVisitor ..> SpaCharge : <<use>>
+ChargeVisitor ..> RentalCharge : <<use>>
+ChargeVisitor ..> TouristTaxCharge : <<use>>
+
+GuestBill ..> ChargeVisitor : <<use>> accept()
+
+' Журнал
+GuestBill ..> Logger : <<use>>
+TaxCalculationVisitor ..> Logger : <<use>>
+BonusPointsVisitor ..> Logger : <<use>>
+TourOperatorReportVisitor ..> Logger : <<use>>
+Main ..> Logger : <<use>>
+
+' Клієнт
+Main ..> GuestBill : <<create>>
+Main ..> TaxCalculationVisitor : <<create>>
+Main ..> BonusPointsVisitor : <<create>>
+Main ..> TourOperatorReportVisitor : <<create>>
+
+note right of Charge::accept
+  **Подвійна диспетчеризація.**
+  Нарахування викликає visitor.visit(this),
+  тому для кожного типу обирається
+  свій метод відвідувача без if.
+end note
+
+note bottom of GuestBill
+  accept() обходить усі нарахування
+  одним проходом і передає кожному
+  відвідувача.
+end note
+
+note bottom of TourOperatorReportVisitor
+  Нова операція додається
+  одним класом, класи нарахувань
+  не змінюються.
+end note
+
+note right of ChargeVisitor
+  Новий тип нарахування вимагає
+  нового visit() у цьому інтерфейсі
+  і в усіх відвідувачах (обмеження Visitor).
+end note
+
+@enduml
