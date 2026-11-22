@@ -1,0 +1,187 @@
+@startuml
+title Iterator: обхід номерів готелю «Карпатські вершини»
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+enum RoomCategory <<enumeration>> {
+  STANDARD
+  LUXURY
+  - title : String {readOnly}
+  - RoomCategory(title : String)
+  + getTitle() : String
+}
+
+enum RoomStatus <<enumeration>> {
+  FREE
+  OCCUPIED
+  NEEDS_CLEANING
+  - title : String {readOnly}
+  - RoomStatus(title : String)
+  + getTitle() : String
+}
+
+class Room <<Element>> {
+  - number : String {readOnly}
+  - category : RoomCategory {readOnly}
+  - status : RoomStatus {readOnly}
+  - location : String {readOnly}
+  + Room(number : String, category : RoomCategory, status : RoomStatus, location : String)
+  + getNumber() : String
+  + getCategory() : RoomCategory
+  + getStatus() : RoomStatus
+  + describe() : String
+}
+
+class Floor <<Structure>> {
+  - number : int {readOnly}
+  - rooms : List<Room> {readOnly}
+  + Floor(number : int)
+  + getNumber() : int
+  + addRoom(room : Room) : void
+  + getRooms() : List<Room>
+}
+
+class Building <<Structure>> {
+  - name : String {readOnly}
+  - floors : List<Floor> {readOnly}
+  - detachedRooms : List<Room> {readOnly}
+  + Building(name : String)
+  + getName() : String
+  + addFloor(floor : Floor) : void
+  + addDetachedRoom(room : Room) : void
+  + getAllRooms() : List<Room>
+}
+
+interface RoomIterator <<Iterator>> {
+  + hasNext() : boolean
+  + next() : Room
+}
+
+interface RoomCollection <<Aggregate>> {
+  + createCleaningIterator() : RoomIterator
+  + createFreeRoomsIterator(category : RoomCategory) : RoomIterator
+  + createBuildingIterator(buildingName : String) : RoomIterator
+}
+
+abstract class FilteringRoomIterator <<AbstractIterator>> {
+  - rooms : List<Room> {readOnly}
+  - position : int
+  # FilteringRoomIterator(rooms : List<Room>)
+  # {abstract} matches(room : Room) : boolean
+  + hasNext() : boolean
+  + next() : Room
+  - skipToNextMatch() : void
+}
+
+class CleaningRoomIterator <<ConcreteIterator>> {
+  + CleaningRoomIterator(rooms : List<Room>)
+  # matches(room : Room) : boolean
+}
+
+class FreeRoomIterator <<ConcreteIterator>> {
+  - category : RoomCategory {readOnly}
+  + FreeRoomIterator(rooms : List<Room>, category : RoomCategory)
+  # matches(room : Room) : boolean
+}
+
+class BuildingRoomIterator <<ConcreteIterator>> {
+  + BuildingRoomIterator(rooms : List<Room>)
+  # matches(room : Room) : boolean
+}
+
+class Hotel <<ConcreteAggregate>> {
+  - buildings : List<Building> {readOnly}
+  + addBuilding(building : Building) : void
+  - collectAllRooms() : List<Room>
+  + createCleaningIterator() : RoomIterator
+  + createFreeRoomsIterator(category : RoomCategory) : RoomIterator
+  + createBuildingIterator(buildingName : String) : RoomIterator
+  + logState(stage : String) : void
+}
+
+class Logger <<utility, final>> {
+  - {static} FORMAT : DateTimeFormatter {readOnly}
+  - {static} START_TIME : LocalTime {readOnly}
+  - {static} STEP_MINUTES : int {readOnly}
+  - {static} currentTime : LocalTime
+  - Logger()
+  + {static} log(source : String, event : String) : void
+  + {static} section(title : String) : void
+  + {static} reset() : void
+  + {static} money(value : double) : String
+}
+
+class Main <<Client>> {
+  + {static} main(args : String[]) : void
+  - {static} scenarioRoomTraversal() : void
+  - {static} traverse(source : String, iterator : RoomIterator) : void
+  - {static} createHotel() : Hotel
+}
+
+' Реалізація та успадкування
+RoomIterator <|.. FilteringRoomIterator
+FilteringRoomIterator <|-- CleaningRoomIterator
+FilteringRoomIterator <|-- FreeRoomIterator
+FilteringRoomIterator <|-- BuildingRoomIterator
+RoomCollection <|.. Hotel
+
+' Структура зберігання (агрегація: об'єкти створюються поза контейнером)
+Hotel "1" o-- "0..*" Building : buildings
+Building "1" o-- "0..*" Floor : floors
+Floor "1" o-- "0..*" Room : rooms
+Building "1" o-- "0..*" Room : detachedRooms
+
+' Асоціації
+FilteringRoomIterator "1" --> "0..*" Room : rooms
+FreeRoomIterator "1" --> "1" RoomCategory : category
+Room "1" --> "1" RoomCategory : category
+Room "1" --> "1" RoomStatus : status
+
+' Залежності
+RoomCollection ..> RoomIterator : <<create>>
+RoomCollection ..> RoomCategory : <<use>>
+Hotel ..> CleaningRoomIterator : <<create>>
+Hotel ..> FreeRoomIterator : <<create>>
+Hotel ..> BuildingRoomIterator : <<create>>
+Hotel ..> Logger : <<use>>
+
+Main ..> RoomCollection : <<use>>
+Main ..> RoomIterator : <<use>>
+Main ..> Hotel : <<create>>
+Main ..> Building : <<create>>
+Main ..> Floor : <<create>>
+Main ..> Room : <<create>>
+Main ..> Logger : <<use>>
+
+note right of RoomIterator
+  Єдине, що знають служби
+  про обхід: hasNext() і next().
+  Структура зберігання від них прихована.
+end note
+
+note bottom of FilteringRoomIterator
+  **Спільна механіка.**
+  position: власна «закладка» кожного ітератора,
+  тому кілька обходів незалежні.
+  matches(): єдиний крок, який
+  підкласи реалізують по-своєму.
+end note
+
+note bottom of Building
+  Єдине місце, що знає, як зберігаються
+  номери: поверхи та котеджі без поверху.
+  getAllRooms() розкриває структуру в плоский список.
+end note
+
+note bottom of BuildingRoomIterator
+  matches() завжди true:
+  корпус обирає Hotel, а не фільтр.
+end note
+
+note right of Hotel
+  Створює ітератор зі «знімка» списку
+  номерів на момент виклику.
+end note
+
+@enduml
