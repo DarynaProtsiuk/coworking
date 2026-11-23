@@ -1,0 +1,69 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+package task2 {
+
+    class Booking {
+        - strategy : PricingStrategy
+        - nights : int
+        - roomType : String
+        + Booking(strategy : PricingStrategy, nights : int, roomType : String)
+        + setStrategy(strategy : PricingStrategy) : void
+        + calculatePrice() : double
+    }
+
+    interface PricingStrategy <<Strategy>> {
+        + calculatePrice(nights : int, roomType : String) : double
+    }
+
+    class StandardPricing <<ConcreteStrategy>> {
+        + calculatePrice(nights : int, roomType : String) : double
+    }
+
+    class SeasonalPricing <<ConcreteStrategy>> {
+        + calculatePrice(nights : int, roomType : String) : double
+    }
+
+    class EarlyBookingPricing <<ConcreteStrategy>> {
+        + calculatePrice(nights : int, roomType : String) : double
+    }
+
+    class RegularGuestPricing <<ConcreteStrategy>> {
+        + calculatePrice(nights : int, roomType : String) : double
+    }
+
+    class LastMinutePricing <<ConcreteStrategy>> {
+        + calculatePrice(nights : int, roomType : String) : double
+    }
+
+    class Main <<Client>> {
+        + main(args : String[]) : void
+        + runScenario() : void
+    }
+}
+
+package task3 {
+    class Logger <<Utility>> {
+        + {static} log(source : String, event : String) : void
+        + {static} section(title : String) : void
+        + {static} reset() : void
+    }
+}
+
+Booking --> PricingStrategy : uses
+PricingStrategy <|.. StandardPricing
+PricingStrategy <|.. SeasonalPricing
+PricingStrategy <|.. EarlyBookingPricing
+PricingStrategy <|.. RegularGuestPricing
+PricingStrategy <|.. LastMinutePricing
+
+Main ..> Booking : creates
+Main ..> Logger : uses
+
+StandardPricing ..> Logger : logs
+SeasonalPricing ..> Logger : logs
+EarlyBookingPricing ..> Logger : logs
+RegularGuestPricing ..> Logger : logs
+LastMinutePricing ..> Logger : logs
+
+@enduml
