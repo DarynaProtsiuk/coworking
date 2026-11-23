@@ -1,11 +1,13 @@
 import task1.*;
 import task2.*;
+import task3.*;
 
 public class Main {
 
     public static void main(String[] args) {
         task1();
         task2();
+        task3();
     }
 
     // Ситуація 1 (Visitor): операції над нарахуваннями рахунку
@@ -119,5 +121,70 @@ public class Main {
         hotel.addBuilding(buildingB);
         hotel.addBuilding(cottages);
         return hotel;
+    }
+
+    public static void task3() {
+        Logger.reset();
+        Logger.section("Завдання 3. Редагування бронювання (Memento)");
+
+        Booking booking = new Booking(
+                5,
+                "01.12.2026",
+                "05.12.2026"
+        );
+
+        BookingHistory history = new BookingHistory();
+
+        Logger.log("Main", "Створено групове бронювання.");
+        Logger.log("Booking", "Початковий стан: " + booking.getState());
+
+
+        history.save(booking);
+        Logger.log("BookingHistory", "Початковий стан збережено.");
+
+        Logger.log("Main", "Зміна дат бронювання.");
+        Logger.log("Booking", "Стан ДО зміни: " + booking.getState());
+
+        booking.changeDates(
+                "10.12.2026",
+                "15.12.2026"
+        );
+
+        Logger.log("Booking", "Стан ПІСЛЯ зміни: " + booking.getState());
+
+        history.save(booking);
+        Logger.log("BookingHistory", "Стан після зміни дат збережено.");
+
+        Logger.log("Main", "Додавання послуг: трансфер та SPA.");
+
+        Logger.log("Booking", "Стан ДО додавання послуг: " + booking.getState());
+
+        booking.addService("Трансфер");
+        booking.addService("SPA");
+
+        Logger.log("Booking", "Стан ПІСЛЯ додавання послуг: " + booking.getState());
+
+        history.save(booking);
+        Logger.log("BookingHistory", "Стан із послугами збережено.");
+
+        Logger.log("Main", "Перший відкат.");
+
+        Logger.log("Booking", "Стан ДО відкату: " + booking.getState());
+
+        if (history.undo(booking)) {
+            Logger.log("BookingHistory", "Виконано перший відкат.");
+        }
+
+        Logger.log("Booking", "Стан ПІСЛЯ відкату: " + booking.getState());
+
+        Logger.log("Main", "Другий відкат.");
+
+        Logger.log("Booking", "Стан ДО відкату: " + booking.getState());
+
+        if (history.undo(booking)) {
+            Logger.log("BookingHistory", "Виконано другий відкат.");
+        }
+
+        Logger.log("Booking", "Стан ПІСЛЯ відкату: " + booking.getState());
     }
 }

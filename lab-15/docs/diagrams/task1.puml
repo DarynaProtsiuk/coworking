@@ -1,0 +1,109 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+
+package task1 {
+
+    class Room {
+        - state : RoomState
+        + Room(state : RoomState)
+        + setState(state : RoomState) : void
+        + book() : void
+        + checkIn() : void
+        + checkOut() : void
+        + repair() : void
+        + clean() : void
+    }
+
+    interface RoomState <<State>> {
+        + book(room : Room) : void
+        + checkIn(room : Room) : void
+        + checkOut(room : Room) : void
+        + repair(room : Room) : void
+        + clean(room : Room) : void
+    }
+
+    class FreeCleanState <<ConcreteState>> {
+        + book(room : Room) : void
+        + checkIn(room : Room) : void
+        + checkOut(room : Room) : void
+        + repair(room : Room) : void
+        + clean(room : Room) : void
+    }
+
+    class BookedState <<ConcreteState>> {
+        + book(room : Room) : void
+        + checkIn(room : Room) : void
+        + checkOut(room : Room) : void
+        + repair(room : Room) : void
+        + clean(room : Room) : void
+    }
+
+    class OccupiedState <<ConcreteState>> {
+        + book(room : Room) : void
+        + checkIn(room : Room) : void
+        + checkOut(room : Room) : void
+        + repair(room : Room) : void
+        + clean(room : Room) : void
+    }
+
+    class NeedsCleaningState <<ConcreteState>> {
+        + book(room : Room) : void
+        + checkIn(room : Room) : void
+        + checkOut(room : Room) : void
+        + repair(room : Room) : void
+        + clean(room : Room) : void
+    }
+
+    class RepairState <<ConcreteState>> {
+        + book(room : Room) : void
+        + checkIn(room : Room) : void
+        + checkOut(room : Room) : void
+        + repair(room : Room) : void
+        + clean(room : Room) : void
+    }
+
+    class Main <<Client>> {
+        + main(args : String[]) : void
+        + runScenario() : void
+    }
+}
+
+package task3 {
+
+    class Logger <<Utility>> {
+        - {static} FORMAT : DateTimeFormatter
+        - {static} START_TIME : LocalTime
+        - {static} STEP_MINUTES : int
+        - {static} currentTime : LocalTime
+        - Logger()
+        + {static} log(source : String, event : String) : void
+        + {static} section(title : String) : void
+        + {static} reset() : void
+    }
+}
+
+Room "1" --> "1" RoomState : current state
+
+RoomState <|.. FreeCleanState
+RoomState <|.. BookedState
+RoomState <|.. OccupiedState
+RoomState <|.. NeedsCleaningState
+RoomState <|.. RepairState
+
+Main ..> Room : creates
+Main ..> Logger : uses
+
+FreeCleanState ..> Room : changes state
+BookedState ..> Room : changes state
+OccupiedState ..> Room : changes state
+NeedsCleaningState ..> Room : changes state
+RepairState ..> Room : uses
+
+FreeCleanState ..> Logger : logs events
+BookedState ..> Logger : logs events
+OccupiedState ..> Logger : logs events
+NeedsCleaningState ..> Logger : logs events
+RepairState ..> Logger : logs events
+
+@enduml
